@@ -36,6 +36,7 @@ public class FileServiceImpl implements IFileService {
 
     @Override
     public FileResponse uploadFile(MultipartFile file) {
+
         if (file.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Failed to store empty file");
@@ -45,9 +46,8 @@ public class FileServiceImpl implements IFileService {
             ORDFile fileUploaded = fileRepository.uploadFile(file);
             fileResponse = new FileResponse(fileUploaded);
         } catch (SQLException | IOException e) {
-            String msg = String.format("Failed to store file %f", file.getName());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    msg);
+                    "");
         }
         return fileResponse;
     }

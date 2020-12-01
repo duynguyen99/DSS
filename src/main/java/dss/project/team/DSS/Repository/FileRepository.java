@@ -49,7 +49,7 @@ public class FileRepository {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "cannot connect to database");
         }
 
-        String query = "select image from image_table";
+        String query = "select image, name from image_table";
         if(fileName != null && fileName != ""){
             query += " WHERE name LIKE '%" + fileName + "%'";
         }
@@ -58,10 +58,13 @@ public class FileRepository {
 
         List<ORDFile> files = new ArrayList<>();
         while (resultSet.next()) {
-            OrdImage imgProxy = (OrdImage)resultSet.getORAData("image", OrdImage.getORADataFactory());
+            OrdImage imgObj = (OrdImage) resultSet.getCustomDatum(1,
+                    OrdImage.getFactory( ));
+            OrdImage image = (OrdImage)resultSet.getORAData(1, OrdImage.getORADataFactory());
+            String name = resultSet.getString(2);
             ORDFile file = new ORDFile();
-            file.setData(imgProxy.getDataInByteArray());
-            file.setName(imgProxy.getSourceName());
+            file.setData(imgObj.getDataInByteArray());
+            file.setName(name);
             files.add(file);
         }
         conn.close();
